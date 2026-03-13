@@ -1,0 +1,45 @@
+{
+  "HomePage": {
+    "title": "Find the cheapest fuel station",
+    "subtitle": "Enter an address, search nearby stations and compare available prices.",
+    "results": "Results",
+    "resultsSubtitle": "Stations ordered by the best matching price",
+    "empty": "Enter an address and click search to see nearby fuel stations.",
+    "noResults": "No fuel stations found for this search."
+  },
+  "Filters": {
+    "title": "Search nearby",
+    "subtitle": "Select an address, choose the fuel type and find nearby fuel stations.",
+    "address": "Address",
+    "fuel": "Fuel type",
+    "radius": "Search radius",
+    "search": "Search",
+    "gps": "Use GPS",
+    "searching": "Searching...",
+    "locating": "GPS...",
+    "addressInput": "Enter address or location",
+    "addressError": "No results",
+    "addressLoading": "Searching addresses..."
+  },
+  "Fuel": {
+    "all": "All",
+    "benzina": "Gasoline",
+    "gasolio": "Diesel",
+    "gpl": "LPG",
+    "metano": "Methane"
+  },
+  "Card": {
+    "bestPrice": "Best price",
+    "openMaps": "Open in Google Maps",
+    "updated": "Updated",
+    "self": "Self-service",
+    "served": "Served",
+    "cheapest": "Best deal",
+    "from": "From",
+    "found": "found"
+  },
+  "Error": {
+    "ops": "Oops, something went wrong. Please try again later.",
+    "selectAddress": "Please select an address before searching."
+  }
+}

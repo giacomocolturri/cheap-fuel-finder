@@ -1,0 +1,45 @@
+{
+  "HomePage": {
+    "title": "Trova il distributore più conveniente",
+    "subtitle": "Inserisci un indirizzo, cerca i distributori vicini e confronta i prezzi disponibili.",
+    "results": "Risultati",
+    "resultsSubtitle": "Distributori ordinati per il miglior prezzo compatibile",
+    "empty": "Inserisci un indirizzo e premi cerca per vedere i distributori vicini.",
+    "noResults": "Nessun distributore trovato per questa ricerca."
+  },
+  "Filters": {
+    "title": "Cerca in zona",
+    "subtitle": "Seleziona un indirizzo, imposta il carburante e trova i distributori vicini.",
+    "address": "Indirizzo",
+    "fuel": "Carburante",
+    "radius": "Raggio di ricerca",
+    "search": "Cerca",
+    "gps": "Usa GPS",
+    "searching": "Cerco...",
+    "locating": "GPS...",
+    "addressInput": "Inserisci indirizzo o località",
+    "addressError": "Nessun risultato",
+    "addressLoading": "Cerco indirizzi..."
+  },
+  "Fuel": {
+    "all": "Tutti",
+    "benzina": "Benzina",
+    "gasolio": "Gasolio",
+    "gpl": "GPL",
+    "metano": "Metano"
+  },
+  "Card": {
+    "bestPrice": "Miglior prezzo",
+    "openMaps": "Apri in Google Maps",
+    "updated": "Aggiornato",
+    "self": "Self",
+    "served": "Servito",
+    "cheapest": "Più conveniente",
+    "from": "Da",
+    "found": "trovato/i"
+  },
+  "Error": {
+    "ops": "Ops, qualcosa è andato storto. Riprova più tardi.",
+    "selectAddress": "Seleziona un indirizzo prima di cercare."
+  }
+}
