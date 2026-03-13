@@ -8,14 +8,15 @@ Built with **Next.js**, **TypeScript**, **Tailwind CSS**, **shadcn/ui**, and **L
 
 ## 🧠 How It Works
 
-1. 🌍 **Get your location** — the browser tries to detect your GPS position
-2. 💰 **Search nearby stations** — instantly fetches the cheapest options around
-3. 📍 **No GPS? No problem!** — defaults to _Milan, Italy_
-4. 🧭 **You can:**
+1. 🌍 **Enter an address** in the search field
+2. 📍 **Select** one of the suggested locations
+3. ⚙️ **Choose a fuel** type
+4. 💰 **Search nearby stations** instantly fetches the cheapest options around
+5. 🧭 **You can:**
    - Search by address
    - Adjust the search radius
    - Filter by fuel type
-5. 📊 **Results appear:**
+6. 📊 **Results appear:**
    - As markers on the map
    - As cards in a right-side results panel
 
@@ -26,8 +27,21 @@ Built with **Next.js**, **TypeScript**, **Tailwind CSS**, **shadcn/ui**, and **L
 - ⚛️ **Next.js**
 - 💙 **TypeScript**
 - 🎨 **Tailwind CSS**
-- 🧩 **shadcn/ui**
+- 🧩 **Shadcn/ui**
 - 🗺️ **React Leaflet**
+- 🌐 **Next-intl**
+
+---
+
+## 🌍 Internationalization (i18n)
+
+The application supports **Italian** and **English** using `next-intl`.
+Localized routes are handled through the App Router.
+
+### Supported locales
+
+- `it`
+- `en`
 
 ---
 
