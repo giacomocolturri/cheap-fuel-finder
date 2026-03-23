@@ -50,5 +50,5 @@ Localized routes are handled through the App Router.
 Cheap Fuel Finder relies on open and public data only:
 
 - 🇮🇹 [Public Italian Fuel Price service](https://carburanti.mise.gov.it/ospzSearch/home/)
-- 🏙️ OpenStreetMap nominatim for free address autocomplete
-- 🧱 OpenStreetMap tiles for map rendering
+- 🏙️ Geoapify for free address autocomplete
+- 🧱 OpenStreetMap for map rendering

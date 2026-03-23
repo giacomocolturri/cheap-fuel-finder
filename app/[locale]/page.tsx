@@ -97,8 +97,8 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <section className="mx-auto px-4 py-8">
+    <main className="h-screen bg-slate-50">
+      <section className="mx-auto flex h-full flex-col px-4 py-6">
         {/* Header */}
         <div className="relative mb-6 pr-24">
           <div className="absolute right-0 top-0 z-10">
@@ -112,8 +112,8 @@ export default function HomePage() {
         </div>
 
         {/* Filters */}
-        <div className="grid gap-6 xl:grid-cols-[1.25fr_0.9fr]">
-          <div className="space-y-6">
+        <div className="grid min-h-0 flex-1 gap-6 xl:grid-cols-[1.25fr_0.9fr] z-20">
+          <div className="flex min-h-0 flex-col gap-6">
             <StationFilters
               radius={radius}
               address={address}
@@ -144,7 +144,7 @@ export default function HomePage() {
           {/* Sidebar */}
           <aside
             ref={resultsRef}
-            className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"
+            className="flex min-h-0 flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"
           >
             <div className="mb-4 flex items-center justify-between">
               <div>
@@ -169,7 +169,7 @@ export default function HomePage() {
               </div>
             )}
 
-            <div className="max-h-[78vh] space-y-4 overflow-y-auto pr-1">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
               {isSearching && (
                 <>
                   <Skeleton className="h-40 w-full rounded-3xl" />

@@ -28,6 +28,7 @@ export function AddressAutocomplete({
   const [hasInteracted, setHasInteracted] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const t = useTranslations("Filters");
   const errorT = useTranslations("Error");
@@ -47,17 +48,27 @@ export function AddressAutocomplete({
     const q = value.trim();
 
     if (q.length < 3) {
+      abortRef.current?.abort();
       setSuggestions([]);
       setOpen(false);
+      setLoading(false);
       return;
     }
 
     const timeout = setTimeout(async () => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+
       setLoading(true);
 
       try {
         const response = await fetch(
           `/api/geocode/autocomplete?q=${encodeURIComponent(q)}`,
+          {
+            signal: controller.signal,
+            cache: "no-store",
+          },
         );
 
         const data = await response.json();
@@ -71,16 +82,26 @@ export function AddressAutocomplete({
         setSuggestions(nextSuggestions);
         setOpen(hasInteracted && nextSuggestions.length > 0);
       } catch (error) {
+        if ((error as Error).name === "AbortError") {
+          return;
+        }
+
         console.error(error);
         setSuggestions([]);
         setOpen(false);
       } finally {
         setLoading(false);
       }
-    }, 500);
+    }, 350);
 
     return () => clearTimeout(timeout);
-  }, [value, hasInteracted]);
+  }, [value, hasInteracted, errorT]);
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
 
   return (
     <div ref={containerRef} className="relative">
@@ -98,6 +119,10 @@ export function AddressAutocomplete({
         }}
         placeholder={t("addressInput")}
         className="h-11 rounded-xl"
+        autoComplete="off"
+        aria-expanded={open}
+        aria-autocomplete="list"
+        role="combobox"
       />
 
       {loading && (
@@ -105,13 +130,14 @@ export function AddressAutocomplete({
       )}
 
       {open && (
-        <div className="absolute left-0 right-0 top-full z-1000 mt-2 max-h-72 overflow-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-72 overflow-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
           {suggestions.length > 0 ? (
             suggestions.map((item) => (
               <button
                 key={item.id}
                 type="button"
-                onClick={() => {
+                onMouseDown={(e) => {
+                  e.preventDefault();
                   onValueChange(item.label);
                   onPlaceSelect(item);
                   setOpen(false);
