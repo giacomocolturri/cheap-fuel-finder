@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
-type NominatimItem = {
-    place_id: number;
-    display_name: string;
-    lat: string;
-    lon: string;
+type GeoapifyResult = {
+    place_id?: string;
+    formatted?: string;
+    lat?: number;
+    lon?: number;
+    city?: string;
+    postcode?: string;
+    state?: string;
+    country?: string;
+};
+
+type GeoapifyResponse = {
+    results?: GeoapifyResult[];
 };
 
 export async function GET(req: NextRequest) {
@@ -14,19 +22,28 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ results: [] });
     }
 
+    const apiKey = "227e3012849f43a099d75a235a733e88";
+
+    if (!apiKey) {
+        return NextResponse.json(
+            { error: "Missing GEOAPIFY_API_KEY" },
+            { status: 500 },
+        );
+    }
+
     try {
-        const url = new URL("https://nominatim.openstreetmap.org/search");
-        url.searchParams.set("q", query);
-        url.searchParams.set("format", "jsonv2");
-        url.searchParams.set("addressdetails", "1");
+        const url = new URL("https://api.geoapify.com/v1/geocode/autocomplete");
+        url.searchParams.set("text", query);
         url.searchParams.set("limit", "5");
-        url.searchParams.set("countrycodes", "it");
+        url.searchParams.set("lang", "it");
+        url.searchParams.set("filter", "countrycode:it");
+        url.searchParams.set("format", "json");
+        url.searchParams.set("apiKey", apiKey);
 
         const response = await fetch(url.toString(), {
             cache: "no-store",
             headers: {
                 Accept: "application/json",
-                "User-Agent": "cheap-fuel-finder/1.0",
             },
         });
 
@@ -35,28 +52,33 @@ export async function GET(req: NextRequest) {
         if (!response.ok) {
             return NextResponse.json(
                 {
-                    error: "Geocoding service error",
+                    error: "Geoapify service error",
                     upstreamStatus: response.status,
                     upstreamBody: rawText,
                 },
-                { status: response.status }
+                { status: response.status },
             );
         }
 
-        const data: NominatimItem[] = JSON.parse(rawText);
+        const data: GeoapifyResponse = JSON.parse(rawText);
 
-        const results = data.map((item) => ({
-            id: String(item.place_id),
-            label: item.display_name,
-            lat: Number(item.lat),
-            lng: Number(item.lon),
-        }));
+        const results =
+            data.results?.map((item, index) => ({
+                id: item.place_id ?? String(index),
+                label: item.formatted ?? "",
+                lat: item.lat ?? 0,
+                lng: item.lon ?? 0,
+                city: item.city ?? "",
+                postcode: item.postcode ?? "",
+                state: item.state ?? "",
+                country: item.country ?? "",
+            })) ?? [];
 
         return NextResponse.json({ results });
-    } catch {
+    } catch (error) {
         return NextResponse.json(
             { error: "Internal geocoding error" },
-            { status: 500 }
+            { status: 500 },
         );
     }
 }
