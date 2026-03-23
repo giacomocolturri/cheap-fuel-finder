@@ -77,7 +77,7 @@ export function AddressAutocomplete({
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, [value, hasInteracted]);

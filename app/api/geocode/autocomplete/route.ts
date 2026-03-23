@@ -1,22 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-type PhotonFeature = {
-    geometry?: {
-        coordinates?: [number, number];
-    };
-    properties?: {
-        name?: string;
-        street?: string;
-        housenumber?: string;
-        postcode?: string;
-        city?: string;
-        state?: string;
-        country?: string;
-    };
-};
-
-type PhotonResponse = {
-    features?: PhotonFeature[];
+type NominatimItem = {
+    place_id: number;
+    display_name: string;
+    lat: string;
+    lon: string;
 };
 
 export async function GET(req: NextRequest) {
@@ -27,10 +15,12 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const url = new URL("https://photon.komoot.io/api/");
+        const url = new URL("https://nominatim.openstreetmap.org/search");
         url.searchParams.set("q", query);
+        url.searchParams.set("format", "jsonv2");
+        url.searchParams.set("addressdetails", "1");
         url.searchParams.set("limit", "5");
-        url.searchParams.set("lang", "en");
+        url.searchParams.set("countrycodes", "it");
 
         const response = await fetch(url.toString(), {
             cache: "no-store",
@@ -45,7 +35,7 @@ export async function GET(req: NextRequest) {
         if (!response.ok) {
             return NextResponse.json(
                 {
-                    error: "Errore nel servizio di geocoding",
+                    error: "Geocoding service error",
                     upstreamStatus: response.status,
                     upstreamBody: rawText,
                 },
@@ -53,41 +43,19 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        const data: PhotonResponse = JSON.parse(rawText);
+        const data: NominatimItem[] = JSON.parse(rawText);
 
-        const results = (data.features ?? [])
-            .map((feature, index) => {
-                const coords = feature.geometry?.coordinates;
-                const p = feature.properties;
-
-                if (!coords || coords.length < 2) return null;
-
-                const lng = coords[0];
-                const lat = coords[1];
-
-                const parts = [
-                    p?.name,
-                    [p?.street, p?.housenumber].filter(Boolean).join(" "),
-                    p?.postcode,
-                    p?.city,
-                    p?.state,
-                    p?.country,
-                ].filter(Boolean);
-
-                return {
-                    id: `${lat}-${lng}-${index}`,
-                    label: parts.join(", "),
-                    lat,
-                    lng,
-                };
-            })
-            .filter(Boolean);
+        const results = data.map((item) => ({
+            id: String(item.place_id),
+            label: item.display_name,
+            lat: Number(item.lat),
+            lng: Number(item.lon),
+        }));
 
         return NextResponse.json({ results });
-    } catch (error) {
-
+    } catch {
         return NextResponse.json(
-            { error: "Errore interno durante il geocoding" },
+            { error: "Internal geocoding error" },
             { status: 500 }
         );
     }

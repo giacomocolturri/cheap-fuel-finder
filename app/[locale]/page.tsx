@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StationCard } from "@/components/station-card";
@@ -18,6 +18,7 @@ const StationsMap = dynamic(
 );
 
 export default function HomePage() {
+  const resultsRef = useRef<HTMLDivElement | null>(null);
   const t = useTranslations("HomePage");
   const errorT = useTranslations("Error");
   const cardT = useTranslations("Card");
@@ -78,6 +79,16 @@ export default function HomePage() {
       }
 
       setStations(data.results ?? []);
+
+      // Scroll to results on mobile after search
+      setTimeout(() => {
+        if (window.innerWidth < 1280) {
+          resultsRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 100);
     } catch {
       setError(errorT("ops"));
     } finally {
@@ -131,7 +142,10 @@ export default function HomePage() {
           </div>
 
           {/* Sidebar */}
-          <aside className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <aside
+            ref={resultsRef}
+            className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-slate-900">
