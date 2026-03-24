@@ -97,23 +97,24 @@ export default function HomePage() {
   };
 
   return (
-    <main className="h-screen bg-slate-50">
-      <section className="mx-auto flex h-full flex-col px-4 py-6">
+    <main className="min-h-screen w-full overflow-x-hidden bg-slate-50 xl:h-screen">
+      <section className="mx-auto flex min-h-screen w-full max-w-[100vw] flex-col px-4 py-6 xl:h-full">
         {/* Header */}
         <div className="relative mb-6 pr-24">
           <div className="absolute right-0 top-0 z-10">
             <LanguageSwitcher />
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-slate-950">
+          <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-950">
             {t("title")}
           </h1>
-          <p className="mt-2 max-w-2xl text-slate-600">{t("subtitle")}</p>
+          <p className="text-sm md:text-2xl mt-2 max-w-full text-slate-600">
+            {t("subtitle")}
+          </p>
         </div>
-
         {/* Filters */}
-        <div className="grid min-h-0 flex-1 gap-6 xl:grid-cols-[1.25fr_0.9fr] z-20">
-          <div className="flex min-h-0 flex-col gap-6">
+        <div className="grid min-h-0 flex-1 gap-6 grid-cols-1 xl:grid-cols-[1.25fr_0.9fr] z-20">
+          <div className="min-h-0 flex flex-col gap-6">
             <StationFilters
               radius={radius}
               address={address}
@@ -146,8 +147,8 @@ export default function HomePage() {
             ref={resultsRef}
             className="flex min-h-0 flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"
           >
-            <div className="mb-4 flex items-center justify-between">
-              <div>
+            <div className="mb-4 flex flex-row items-center justify-between gap-3">
+              <div className="min-w-0">
                 <h2 className="text-xl font-semibold text-slate-900">
                   {t("results")}
                 </h2>
@@ -155,7 +156,7 @@ export default function HomePage() {
               </div>
 
               {!isSearching && hasSearched && (
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">
+                <span className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600 whitespace-nowrap">
                   {filteredStations.length} {cardT("found")}
                 </span>
               )}
@@ -169,7 +170,7 @@ export default function HomePage() {
               </div>
             )}
 
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto">
               {isSearching && (
                 <>
                   <Skeleton className="h-40 w-full rounded-3xl" />

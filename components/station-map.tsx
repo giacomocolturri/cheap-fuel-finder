@@ -51,15 +51,15 @@ export function StationsMap({ center, radiusKm, stations }: Props) {
     : [45.4642, 9.19];
 
   return (
-    <div className="h-105 w-full overflow-hidden rounded-3xl border bg-white shadow-sm">
+    <div className="max-w-full h-72 w-full overflow-hidden rounded-3xl border bg-white shadow-sm md:h-105">
       <MapContainer
         center={defaultCenter}
         zoom={12}
         scrollWheelZoom
-        className="h-full w-full"
+        className="h-full w-full max-w-full"
       >
         <TileLayer
-          attribution="&copy; OpenStreetMap contributors"
+          attribution="&copy; OpenStreetMap"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
