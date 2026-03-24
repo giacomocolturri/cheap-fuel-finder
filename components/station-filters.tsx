@@ -18,10 +18,12 @@ type Props = {
   address: string;
   fuelKind: FuelKind;
   isSearching: boolean;
+  isLocating: boolean;
   onRadiusChange: (value: number) => void;
   onAddressChange: (value: string) => void;
   onAddressSelect: (place: { label: string; lat: number; lng: number }) => void;
   onFuelChange: (value: FuelKind) => void;
+  onGpsClick: () => void;
   onSearch: () => void;
 };
 
@@ -30,10 +32,12 @@ export function StationFilters({
   address,
   fuelKind,
   isSearching,
+  isLocating,
   onRadiusChange,
   onAddressChange,
   onAddressSelect,
   onFuelChange,
+  onGpsClick,
   onSearch,
 }: Props) {
   const t = useTranslations("Filters");
@@ -61,11 +65,12 @@ export function StationFilters({
 
           <div className="shrink-0">
             <Button
-              disabled={true}
+              onClick={onGpsClick}
+              disabled={isLocating}
               variant="outline"
               className="h-11 rounded-xl w-20"
             >
-              {t("gps")}
+              {isLocating ? t("locating") : t("gps")}
             </Button>
           </div>
         </div>

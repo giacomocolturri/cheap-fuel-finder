@@ -16,10 +16,14 @@ type GeoapifyResponse = {
 };
 
 export async function GET(req: NextRequest) {
-    const query = req.nextUrl.searchParams.get("q")?.trim();
+    const lat = req.nextUrl.searchParams.get("lat")?.trim();
+    const lng = req.nextUrl.searchParams.get("lng")?.trim();
 
-    if (!query || query.length < 3) {
-        return NextResponse.json({ results: [] });
+    if (!lat || !lng) {
+        return NextResponse.json(
+            { error: "Missing lat or lng parameters" },
+            { status: 400 },
+        );
     }
 
     const apiKey = process.env.GEOAPIFY_API_KEY;
@@ -32,11 +36,10 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const url = new URL("https://api.geoapify.com/v1/geocode/autocomplete");
-        url.searchParams.set("text", query);
-        url.searchParams.set("limit", "5");
+        const url = new URL("https://api.geoapify.com/v1/geocode/reverse");
+        url.searchParams.set("lat", lat);
+        url.searchParams.set("lon", lng);
         url.searchParams.set("lang", "it");
-        url.searchParams.set("filter", "countrycode:it");
         url.searchParams.set("format", "json");
         url.searchParams.set("apiKey", apiKey);
 
@@ -62,22 +65,29 @@ export async function GET(req: NextRequest) {
 
         const data: GeoapifyResponse = JSON.parse(rawText);
 
-        const results =
-            data.results?.map((item, index) => ({
-                id: item.place_id ?? String(index),
-                label: item.formatted ?? "",
-                lat: item.lat ?? 0,
-                lng: item.lon ?? 0,
-                city: item.city ?? "",
-                postcode: item.postcode ?? "",
-                state: item.state ?? "",
-                country: item.country ?? "",
-            })) ?? [];
+        const result = data.results?.[0];
+        if (!result) {
+            return NextResponse.json(
+                { error: "No address found for these coordinates" },
+                { status: 404 },
+            );
+        }
 
-        return NextResponse.json({ results });
-    } catch (error) {
+        const address = {
+            id: result.place_id ?? "current-location",
+            label: result.formatted ?? "",
+            lat: result.lat ?? parseFloat(lat),
+            lng: result.lon ?? parseFloat(lng),
+            city: result.city ?? "",
+            postcode: result.postcode ?? "",
+            state: result.state ?? "",
+            country: result.country ?? "",
+        };
+
+        return NextResponse.json({ result: address });
+    } catch {
         return NextResponse.json(
-            { error: "Internal geocoding error" },
+            { error: "Internal reverse geocoding error" },
             { status: 500 },
         );
     }

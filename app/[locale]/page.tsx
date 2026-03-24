@@ -33,6 +33,7 @@ export default function HomePage() {
   const [stations, setStations] = useState<StationApiItem[]>([]);
 
   const [isSearching, setIsSearching] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -96,6 +97,70 @@ export default function HomePage() {
     }
   };
 
+  const handleGpsClick = async () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by this browser.");
+      return;
+    }
+
+    setIsLocating(true);
+    setError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const response = await fetch(
+            `/api/geocode/reverse?lat=${latitude}&lng=${longitude}`,
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to get address from coordinates");
+          }
+
+          const data = await response.json();
+          const place = data.result;
+
+          setAddress(place.label);
+          setPosition({ lat: place.lat, lng: place.lng });
+          setStations([]);
+          setError(null);
+        } catch (error) {
+          console.error("Reverse geocoding error:", error);
+          setError(errorT("ops"));
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        let errorMessage = errorT("ops");
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage =
+              "Location access denied. Please enable location permissions.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out.";
+            break;
+        }
+
+        setError(errorMessage);
+        setIsLocating(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000, // 5 minutes
+      },
+    );
+  };
+
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-slate-50 xl:h-screen">
       <section className="mx-auto flex min-h-screen w-full max-w-[100vw] flex-col px-4 py-6 xl:h-full">
@@ -120,6 +185,7 @@ export default function HomePage() {
               address={address}
               fuelKind={fuelKind}
               isSearching={isSearching}
+              isLocating={isLocating}
               onRadiusChange={setRadius}
               onAddressChange={(value) => {
                 setAddress(value);
@@ -132,6 +198,7 @@ export default function HomePage() {
                 setError(null);
               }}
               onFuelChange={setFuelKind}
+              onGpsClick={handleGpsClick}
               onSearch={() => handleSearch()}
             />
 
